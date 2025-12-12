@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ subject.name }} - Resources</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #00002a; --accent-color: #ff4b4b; --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1); --text-primary: #ffffff;
+        }
+        body { background-color: var(--bg-color); font-family: 'Inter', sans-serif; color: var(--text-primary); }
+        h1, h2, h3 { font-family: 'Poppins', sans-serif; }
+        .glass-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 1rem; padding: 2rem; backdrop-filter: blur(10px); }
+        .form-control { background-color: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; }
+        .form-control:focus { background-color: rgba(255,255,255,0.1); border-color: var(--accent-color); color: white; }
+        .btn-save { background: var(--accent-color); border: none; padding: 0.6rem 2rem; border-radius: 50px; color: white; }
+        .link-card { background: rgba(0,0,0,0.2); border: 1px dashed var(--glass-border); border-radius: 10px; padding: 1rem; margin-bottom: 1rem; transition: 0.2s; }
+        .link-card:hover { border-color: var(--accent-color); background: rgba(255, 75, 75, 0.05); }
+        a { text-decoration: none; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container py-5" style="max-width: 800px;">
+    <div class="d-flex align-items-center mb-4">
+        <a href="/" class="btn btn-outline-light rounded-circle me-3"><i class="bi bi-arrow-left"></i></a>
+        <div>
+            <h2 class="fw-bold mb-0">{{ subject.name }}</h2>
+            <div class="text-secondary">{{ subject.code }} • {{ subject.professor }}</div>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <h5 class="fw-bold mb-4 text-uppercase text-secondary" style="letter-spacing: 1px;">Resource Locker</h5>
+        
+        <form action="/update_resources/{{ subject.id }}" method="POST">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="link-card d-flex align-items-center">
+                        <i class="bi bi-camera-video-fill fs-3 me-3 text-secondary"></i>
+                        <div class="flex-grow-1">
+                            <label class="small text-secondary fw-bold">ZOOM / MEET LINK</label>
+                            <input type="text" name="zoom_link" class="form-control form-control-sm mt-1" placeholder="Paste URL here..." value="{{ subject.zoom_link or '' }}">
+                            {% if subject.zoom_link %}
+                                <a href="{{ subject.zoom_link }}" target="_blank" class="d-block mt-2 small text-success"><i class="bi bi-box-arrow-up-right"></i> Open Link</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="link-card d-flex align-items-center">
+                        <i class="bi bi-file-earmark-pdf-fill fs-3 me-3 text-secondary"></i>
+                        <div class="flex-grow-1">
+                            <label class="small text-secondary fw-bold">SYLLABUS / DRIVE</label>
+                            <input type="text" name="syllabus_link" class="form-control form-control-sm mt-1" placeholder="Paste URL here..." value="{{ subject.syllabus_link or '' }}">
+                             {% if subject.syllabus_link %}
+                                <a href="{{ subject.syllabus_link }}" target="_blank" class="d-block mt-2 small text-success"><i class="bi bi-box-arrow-up-right"></i> Open Link</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="small text-secondary fw-bold mb-2">QUICK NOTES / PROF EMAIL</label>
+                <div class="input-group mb-2">
+                    <span class="input-group-text bg-transparent border-secondary text-secondary"><i class="bi bi-envelope"></i></span>
+                    <input type="text" name="professor_email" class="form-control" placeholder="professor@university.edu" value="{{ subject.professor_email or '' }}">
+                </div>
+                <textarea name="notes" class="form-control" rows="5" placeholder="Write notes here... (e.g. Office hours: Tue 2 PM, Midterm covers Ch 1-4)">{{ subject.notes or '' }}</textarea>
+            </div>
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-save fw-bold">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -2,110 +2,235 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>University Planner</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        :root { --primary-gradient: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); --bg-color: #F3F4F6; --card-border: #E5E7EB; }
-        body { background-color: var(--bg-color); font-family: 'Inter', sans-serif; color: #111827; }
-        h1, h2, h3, h5 { font-family: 'Poppins', sans-serif; }
-        .hero-section { background: var(--primary-gradient); color: white; padding: 3rem 0 5rem; margin-bottom: -3rem; border-radius: 0 0 2rem 2rem; }
-        .glass-card { background: white; border: 1px solid var(--card-border); border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); overflow: hidden; }
-        .glass-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: 0.2s; }
-        .card-header-custom { background: white; border-bottom: 1px solid var(--card-border); padding: 1.25rem 1.5rem; }
-        .progress { height: 8px; border-radius: 999px; background-color: #E5E7EB; }
-        .badge-schedule { background-color: #EEF2FF; color: #4F46E5; font-weight: 600; padding: 0.4em 0.8em; border-radius: 6px; font-size: 0.85em; }
-        .status-safe { color: #059669; font-weight: 600; font-size: 0.9em; }
-        .status-danger { color: #DC2626; font-weight: 600; font-size: 0.9em; }
-        .btn-add { border-radius: 99px; padding: 0.5rem 1.2rem; font-weight: 500; background: var(--primary-gradient); border: none; color: white; }
-        .table > :not(caption) > * > * { padding: 1rem 1.5rem; border-bottom-color: #F3F4F6; }
+        :root {
+            /* PROFESSIONAL PALETTE */
+            --bg-body: #f4f7f6;           /* Very light gray/blue tint */
+            --primary-color: #2c3e50;     /* Dark Slate (Header) */
+            --accent-color: #34495e;      /* Secondary Slate */
+            --brand-color: #0d6efd;       /* Trustworthy Blue */
+            --card-bg: #ffffff;
+            --text-main: #212529;
+            --text-muted: #6c757d;
+            --border-color: #e9ecef;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+        }
+
+        h1, h2, h3, h5 { font-family: 'Manrope', sans-serif; }
+
+        /* Minimal Header */
+        .header-section {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+        }
+
+        /* Clean Professional Cards */
+        .pro-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .card-header-custom {
+            background: transparent;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn-primary-custom {
+            background-color: var(--brand-color);
+            border-color: var(--brand-color);
+            padding: 0.5rem 1.2rem;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+        .btn-primary-custom:hover { background-color: #0b5ed7; }
+
+        .btn-outline-custom {
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: 8px;
+        }
+        .btn-outline-custom:hover { background: #f8f9fa; }
+
+        /* Status Badges */
+        .badge-schedule {
+            background-color: #eef2ff;
+            color: #4f46e5;
+            font-weight: 600;
+            padding: 0.35em 0.8em;
+            border-radius: 6px;
+            font-size: 0.8em;
+        }
+        
+        .badge-exam {
+            background-color: #fff0f0;
+            color: #dc3545;
+            border: 1px solid #ffcdd2;
+            font-weight: 700;
+            font-size: 0.7em;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Progress Bars */
+        .progress { height: 6px; border-radius: 10px; background-color: #e9ecef; }
+        
+        /* Table Styling */
+        .table > :not(caption) > * > * { padding: 1rem 1.5rem; border-bottom-color: var(--border-color); }
+        .table-hover tbody tr:hover { background-color: #f8f9fa; }
+        
+        /* Links */
+        a.subject-link { color: var(--text-main); text-decoration: none; font-weight: 600; }
+        a.subject-link:hover { color: var(--brand-color); }
+
+        /* Task Items */
+        .task-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+        }
+        .task-item:last-child { border-bottom: none; }
+        
+        .icon-box {
+            width: 40px; height: 40px;
+            border-radius: 8px;
+            background-color: #f1f5f9;
+            color: #64748b;
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 1rem;
+        }
+        .icon-box.exam { background-color: #fff0f0; color: #dc3545; }
+
+        /* Exam Alert Hero */
+        .exam-alert-hero {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(44, 62, 80, 0.2);
+        }
     </style>
 </head>
 <body>
 
-<div class="hero-section text-center">
-    <div class="container">
-        <h1 class="fw-bold mb-2">👋 Welcome Back!</h1>
-        <p class="opacity-75 mb-0">Track your attendance and crush your deadlines.</p>
+<div class="header-section">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-mortarboard-fill me-2 text-primary"></i>Academic Planner</h3>
+            <p class="text-muted mb-0 small">Dashboard & Tracker</p>
+        </div>
+        <span class="text-muted small">{{ today.strftime('%A, %b %d') }}</span>
     </div>
 </div>
 
 <div class="container pb-5">
+
+    {% if exams %}
+    <div class="exam-alert-hero">
+        <div class="me-3 fs-2"><i class="bi bi-exclamation-circle"></i></div>
+        <div>
+            <h5 class="mb-1 fw-bold">Upcoming Exam: {{ exams[0].title }}</h5>
+            <div class="opacity-75 small">
+                {{ exams[0].subject.code }} • 
+                {% if (exams[0].due_date - today).days == 0 %} TODAY
+                {% else %} in {{ (exams[0].due_date - today).days }} days
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="row">
         <div class="col-lg-8 mb-4">
-            <div class="glass-card h-100">
-                <div class="card-header-custom d-flex justify-content-between align-items-center">
+            <div class="pro-card">
+                <div class="card-header-custom">
+                    <h6 class="mb-0 fw-bold">My Courses</h6>
                     <div>
-                        <h5 class="mb-0 fw-bold">My Subjects</h5>
-                        <small class="text-muted">Attendance criteria: 75%</small>
-                    </div>
-                    <div>
-                        <a href="/calendar" class="btn btn-outline-primary btn-sm me-2 rounded-pill">
-                            <i class="bi bi-calendar3"></i> Schedule
+                        <a href="/calendar" class="btn btn-outline-custom btn-sm me-2">
+                            <i class="bi bi-calendar3 me-1"></i> Timetable
                         </a>
-                        <button class="btn btn-primary btn-add shadow-sm" data-bs-toggle="modal" data-bs-target="#subjectModal">
-                            <i class="bi bi-plus-lg me-1"></i> Add Subject
+                        <button class="btn btn-primary-custom btn-sm" data-bs-toggle="modal" data-bs-target="#subjectModal">
+                            <i class="bi bi-plus-lg"></i> Add
                         </button>
                     </div>
                 </div>
                 
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0">
-                        <thead class="bg-light text-uppercase text-muted small fw-bold">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-muted small text-uppercase">
                             <tr>
-                                <th class="ps-4">Subject Details</th>
-                                <th>Attendance %</th>
-                                <th class="text-end pe-4">Actions</th>
+                                <th class="ps-4">Subject</th>
+                                <th>Attendance</th>
+                                <th class="text-end pe-4">Manage</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for sub in subjects %}
                             <tr>
                                 <td class="ps-4">
-                                    <div class="d-flex flex-column">
-                                        <span class="fw-bold text-dark">{{ sub.code }}</span>
-                                        <span class="text-secondary small">{{ sub.name }}</span>
-                                        <div class="mt-1">
-                                            {% if sub.schedule %}
-                                                <span class="badge-schedule"><i class="bi bi-clock me-1"></i>{{ sub.schedule }}</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
+                                    <a href="/subject/{{ sub.id }}" class="subject-link fs-6">{{ sub.code }}</a>
+                                    <div class="text-muted small">{{ sub.name }}</div>
+                                    {% if sub.schedule %}
+                                        <div class="mt-1"><span class="badge-schedule">{{ sub.schedule }}</span></div>
+                                    {% endif %}
                                 </td>
                                 <td style="width: 35%;">
                                     <div class="d-flex justify-content-between mb-1">
-                                        <span class="fw-bold {% if sub.attendance_percentage < 75 %}text-danger{% else %}text-success{% endif %}">
+                                        <span class="fw-bold small {% if sub.attendance_percentage < 75 %}text-danger{% else %}text-success{% endif %}">
                                             {{ sub.attendance_percentage }}%
                                         </span>
                                         <small class="text-muted">{{ sub.attended }}/{{ sub.total_classes }}</small>
                                     </div>
                                     <div class="progress mb-2">
                                         <div class="progress-bar {% if sub.attendance_percentage < 75 %}bg-danger{% else %}bg-success{% endif %}" 
-                                             role="progressbar" style="width: {{ sub.attendance_percentage }}%"></div>
+                                             style="width: {{ sub.attendance_percentage }}%"></div>
                                     </div>
-                                    <div class="d-flex align-items-center">
-                                        {% if 'Attend' in sub.bunk_status %}
-                                            <i class="bi bi-exclamation-circle-fill text-danger me-1"></i>
-                                            <span class="status-danger">{{ sub.bunk_status }}</span>
-                                        {% else %}
-                                            <i class="bi bi-check-circle-fill text-success me-1"></i>
-                                            <span class="status-safe">{{ sub.bunk_status }}</span>
-                                        {% endif %}
+                                    <div class="small fw-semibold" style="font-size: 0.8em; color: {% if 'Attend' in sub.bunk_status %}#dc3545{% else %}#198754{% endif %}">
+                                        {{ sub.bunk_status }}
                                     </div>
                                 </td>
                                 <td class="text-end pe-4">
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <a href="/update_attendance/{{ sub.id }}/present" class="btn btn-outline-success btn-sm"><i class="bi bi-check-lg"></i></a>
-                                        <a href="/update_attendance/{{ sub.id }}/absent" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-lg"></i></a>
-                                        <a href="/delete_subject/{{ sub.id }}" class="btn btn-light text-secondary btn-sm" onclick="return confirm('Delete subject?')"><i class="bi bi-trash"></i></a>
+                                    <div class="btn-group">
+                                        <a href="/update_attendance/{{ sub.id }}/present" class="btn btn-sm btn-outline-success"><i class="bi bi-check-lg"></i></a>
+                                        <a href="/update_attendance/{{ sub.id }}/absent" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></a>
+                                        <a href="/delete_subject/{{ sub.id }}" class="btn btn-sm btn-outline-secondary" onclick="return confirm('Delete {{ sub.code }}?')"><i class="bi bi-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>
                             {% else %}
-                            <tr><td colspan="3" class="text-center py-5 text-muted">No subjects yet. Click "Add Subject" to start!</td></tr>
+                            <tr>
+                                <td colspan="3" class="text-center py-5">
+                                    <div class="text-muted mb-2"><i class="bi bi-folder2-open display-6"></i></div>
+                                    <p class="text-muted small mb-0">No subjects found.</p>
+                                    <button class="btn btn-link btn-sm text-decoration-none" data-bs-toggle="modal" data-bs-target="#subjectModal">Add your first subject</button>
+                                </td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -114,40 +239,38 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="glass-card">
-                <div class="card-header-custom d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 fw-bold">📅 Upcoming</h5>
-                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#taskModal">
-                        <i class="bi bi-plus-lg"></i> Add
+            <div class="pro-card">
+                <div class="card-header-custom">
+                    <h6 class="mb-0 fw-bold">Tasks & Exams</h6>
+                    <button class="btn btn-outline-custom btn-sm" data-bs-toggle="modal" data-bs-target="#taskModal">
+                        <i class="bi bi-plus-lg"></i>
                     </button>
                 </div>
-                <div class="p-3">
+                <div>
                     {% if assignments %}
                         {% for task in assignments %}
-                        <div class="d-flex align-items-center p-3 mb-2 rounded-3 bg-white border shadow-sm">
-                            <div class="me-3">
-                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                                    <i class="bi bi-journal-text text-primary lead"></i>
-                                </div>
+                        <div class="task-item">
+                            <div class="icon-box {% if task.is_exam %}exam{% endif %}">
+                                {% if task.is_exam %}<i class="bi bi-lightning-charge-fill"></i>{% else %}<i class="bi bi-check2-square"></i>{% endif %}
                             </div>
                             <div class="flex-grow-1">
-                                <h6 class="mb-0 fw-bold">{{ task.title }}</h6>
+                                <h6 class="mb-0 fw-bold fs-6">{{ task.title }}</h6>
                                 <div class="d-flex align-items-center gap-2 mt-1">
-                                    <span class="badge bg-light text-secondary border fw-normal">{{ task.subject.code }}</span>
+                                    {% if task.is_exam %}<span class="badge-exam">EXAM</span>{% endif %}
+                                    <span class="badge border text-muted fw-normal bg-light">{{ task.subject.code }}</span>
                                     {% if task.due_date == today %}
-                                        <span class="badge bg-danger">Today!</span>
+                                        <span class="badge bg-danger">Today</span>
                                     {% else %}
                                         <small class="text-muted">{{ task.due_date.strftime('%b %d') }}</small>
                                     {% endif %}
                                 </div>
                             </div>
-                            <a href="/delete_assignment/{{ task.id }}" class="text-muted ms-2"><i class="bi bi-check-circle fs-5"></i></a>
+                            <a href="/delete_assignment/{{ task.id }}" class="text-muted ms-2 hover-danger"><i class="bi bi-check-circle fs-5"></i></a>
                         </div>
                         {% endfor %}
                     {% else %}
-                        <div class="text-center py-4 text-muted">
-                            <i class="bi bi-calendar-check display-6 d-block mb-2 opacity-25"></i>
-                            <p class="small">No pending tasks. You're free!</p>
+                        <div class="text-center py-5">
+                            <p class="text-muted small">All caught up! No tasks pending.</p>
                         </div>
                     {% endif %}
                 </div>
@@ -158,17 +281,32 @@
 
 <div class="modal fade" id="subjectModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-body p-4">
-                <h5 class="fw-bold mb-3">Add New Subject</h5>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">New Subject</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
                 <form action="/add_subject" method="POST">
-                    <input type="text" name="name" class="form-control mb-2" placeholder="Subject Name (e.g. Calculus)" required>
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><input type="text" name="code" class="form-control" placeholder="Code (MAT101)" required></div>
-                        <div class="col-6"><input type="text" name="prof" class="form-control" placeholder="Prof. Name"></div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">NAME</label>
+                        <input type="text" name="name" class="form-control" placeholder="e.g. Data Structures" required>
                     </div>
-                    <input type="text" name="schedule" class="form-control mb-3" placeholder="Schedule (e.g. Mon 9AM, Wed 2PM)">
-                    <button type="submit" class="btn btn-primary w-100 btn-add">Save Subject</button>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">CODE</label>
+                            <input type="text" name="code" class="form-control" placeholder="CSE101" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">PROFESSOR</label>
+                            <input type="text" name="prof" class="form-control" placeholder="Dr. Smith">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">SCHEDULE</label>
+                        <input type="text" name="schedule" class="form-control" placeholder="Mon 9AM, Thu 2PM">
+                    </div>
+                    <button type="submit" class="btn btn-primary-custom w-100">Save Course</button>
                 </form>
             </div>
         </div>
@@ -177,19 +315,51 @@
 
 <div class="modal fade" id="taskModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-body p-4">
-                <h5 class="fw-bold mb-3">New Assignment</h5>
-                <form action="/add_assignment" method="POST">
-                    <select name="subject_id" class="form-select mb-2" required>
-                        {% for sub in subjects %}
-                        <option value="{{ sub.id }}">{{ sub.code }}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="text" name="title" class="form-control mb-2" placeholder="Task Title" required>
-                    <input type="date" name="due_date" class="form-control mb-3" required>
-                    <button type="submit" class="btn btn-primary w-100 btn-add">Save Task</button>
-                </form>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">New Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                {% if not subjects %}
+                    <div class="alert alert-warning text-center">
+                        <i class="bi bi-exclamation-triangle-fill mb-2 d-block fs-4"></i>
+                        <strong>No subjects found!</strong><br>
+                        You must add a subject before you can assign tasks to it.
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-outline-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#subjectModal">
+                            Add a Subject First
+                        </button>
+                    </div>
+                {% else %}
+                    <form action="/add_assignment" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">SUBJECT</label>
+                            <select name="subject_id" class="form-select" required>
+                                <option value="" selected disabled>Select a subject...</option>
+                                {% for sub in subjects %}
+                                <option value="{{ sub.id }}">{{ sub.code }} - {{ sub.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">TITLE</label>
+                            <input type="text" name="title" class="form-control" placeholder="e.g. Lab Report / Midterm" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">DUE DATE</label>
+                            <input type="date" name="due_date" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-check form-switch mb-4 p-3 bg-light rounded border">
+                            <input class="form-check-input" type="checkbox" name="is_exam" id="isExamCheck">
+                            <label class="form-check-label fw-bold" for="isExamCheck">High Priority (Exam?)</label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary-custom w-100">Save Task</button>
+                    </form>
+                {% endif %}
             </div>
         </div>
     </div>
