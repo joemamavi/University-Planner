@@ -1,0 +1,11 @@
+# Ignore python compiled files
+__pycache__/
+*.pyc
+
+# Ignore the virtual environment (if you created one)
+venv/
+env/
+
+# Ignore the local database (Keep your attendance private)
+*.db
+planner.db
