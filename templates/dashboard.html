@@ -28,7 +28,6 @@
         .syllabus-bar { height: 4px; border-radius: 2px; background: #e9ecef; width: 100%; display: block; margin-top: 4px; overflow: hidden; }
         .syllabus-fill { height: 100%; display: block; }
         
-        /* New Alerts */
         .bottleneck-alert { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; font-weight: 500; font-size: 0.9em; }
         .planner-widget { background: #1f2937; color: white; border-radius: 12px; padding: 1.5rem; }
     </style>
@@ -61,9 +60,7 @@
         <div class="bottleneck-alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i> 
             <strong>High Pressure Alert:</strong> You have high workloads on: 
-            {% for b in bottlenecks %}
-                {{ b.date.strftime('%b %d') }} ({{ b.count }} tasks){% if not loop.last %}, {% endif %}
-            {% endfor %}
+            {% for b in bottlenecks %}{{ b.date.strftime('%b %d') }} ({{ b.count }} tasks){% if not loop.last %}, {% endif %}{% endfor %}
         </div>
     {% endif %}
 
@@ -94,6 +91,8 @@
                     <h6 class="mb-0 fw-bold">My Courses</h6>
                     <div>
                         <div class="btn-group me-2">
+                            <a href="/matrix" class="btn btn-outline-custom btn-sm"><i class="bi bi-grid-1x2"></i> Priority</a>
+                            
                             <a href="/timetable" class="btn btn-outline-custom btn-sm"><i class="bi bi-table"></i> Weekly</a>
                             <a href="/calendar" class="btn btn-outline-custom btn-sm"><i class="bi bi-calendar-event"></i> Monthly</a>
                         </div>

@@ -62,6 +62,10 @@ class Assignment(db.Model):
     due_date = db.Column(db.Date, nullable=False)
     is_exam = db.Column(db.Boolean, default=False)
     status = db.Column(db.String(20), default='Pending')
+    
+    # NEW: Eisenhower Matrix Position (q1=Do, q2=Schedule, q3=Delegate, q4=Delete)
+    matrix_quadrant = db.Column(db.String(10), default='q2') 
+    
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=False)
 
 class Event(db.Model):
