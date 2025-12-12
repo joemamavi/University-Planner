@@ -4,102 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>University Planner</title>
-    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
-            --bg-color: #F3F4F6;
-            --card-border: #E5E7EB;
-            --text-primary: #111827;
-            --text-secondary: #6B7280;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            font-family: 'Inter', sans-serif;
-            color: var(--text-primary);
-        }
-
-        h1, h2, h3, h4, h5 {
-            font-family: 'Poppins', sans-serif;
-        }
-
-        /* Hero Section */
-        .hero-section {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 3rem 0 5rem;
-            margin-bottom: -3rem; /* Creates the overlap effect */
-            border-bottom-left-radius: 2rem;
-            border-bottom-right-radius: 2rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Modern Cards */
-        .glass-card {
-            background: white;
-            border: 1px solid var(--card-border);
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-            overflow: hidden;
-        }
-
-        .glass-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header-custom {
-            background: white;
-            border-bottom: 1px solid var(--card-border);
-            padding: 1.25rem 1.5rem;
-        }
-
-        /* Attendance Progress Bars */
-        .progress {
-            height: 8px;
-            border-radius: 999px;
-            background-color: #E5E7EB;
-        }
-
-        /* Custom Badges */
-        .badge-schedule {
-            background-color: #EEF2FF;
-            color: #4F46E5;
-            font-weight: 600;
-            padding: 0.5em 0.8em;
-            border-radius: 8px;
-        }
-
-        /* Status Colors */
+        :root { --primary-gradient: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); --bg-color: #F3F4F6; --card-border: #E5E7EB; }
+        body { background-color: var(--bg-color); font-family: 'Inter', sans-serif; color: #111827; }
+        h1, h2, h3, h5 { font-family: 'Poppins', sans-serif; }
+        .hero-section { background: var(--primary-gradient); color: white; padding: 3rem 0 5rem; margin-bottom: -3rem; border-radius: 0 0 2rem 2rem; }
+        .glass-card { background: white; border: 1px solid var(--card-border); border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); overflow: hidden; }
+        .glass-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: 0.2s; }
+        .card-header-custom { background: white; border-bottom: 1px solid var(--card-border); padding: 1.25rem 1.5rem; }
+        .progress { height: 8px; border-radius: 999px; background-color: #E5E7EB; }
+        .badge-schedule { background-color: #EEF2FF; color: #4F46E5; font-weight: 600; padding: 0.4em 0.8em; border-radius: 6px; font-size: 0.85em; }
         .status-safe { color: #059669; font-weight: 600; font-size: 0.9em; }
         .status-danger { color: #DC2626; font-weight: 600; font-size: 0.9em; }
-        
-        .btn-add {
-            border-radius: 99px;
-            padding: 0.5rem 1.2rem;
-            font-weight: 500;
-            background: var(--primary-gradient);
-            border: none;
-        }
-
-        .btn-icon {
-            border-radius: 8px;
-            padding: 0.25rem 0.5rem;
-            transition: all 0.2s;
-        }
-        .btn-icon:hover { background-color: #F3F4F6; }
-
-        /* Table Styling */
-        .table > :not(caption) > * > * {
-            padding: 1rem 1.5rem;
-            border-bottom-color: #F3F4F6;
-        }
+        .btn-add { border-radius: 99px; padding: 0.5rem 1.2rem; font-weight: 500; background: var(--primary-gradient); border: none; color: white; }
+        .table > :not(caption) > * > * { padding: 1rem 1.5rem; border-bottom-color: #F3F4F6; }
     </style>
 </head>
 <body>
@@ -118,32 +40,37 @@
                 <div class="card-header-custom d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="mb-0 fw-bold">My Subjects</h5>
-                        <small class="text-muted">Manage your attendance criteria</small>
+                        <small class="text-muted">Attendance criteria: 75%</small>
                     </div>
-                    <button class="btn btn-primary btn-add shadow-sm" data-bs-toggle="modal" data-bs-target="#subjectModal">
-                        <i class="bi bi-plus-lg me-1"></i> Add Subject
-                    </button>
+                    <div>
+                        <a href="/calendar" class="btn btn-outline-primary btn-sm me-2 rounded-pill">
+                            <i class="bi bi-calendar3"></i> Schedule
+                        </a>
+                        <button class="btn btn-primary btn-add shadow-sm" data-bs-toggle="modal" data-bs-target="#subjectModal">
+                            <i class="bi bi-plus-lg me-1"></i> Add Subject
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="table-responsive">
                     <table class="table align-middle mb-0">
                         <thead class="bg-light text-uppercase text-muted small fw-bold">
                             <tr>
-                                <th>Subject Details</th>
+                                <th class="ps-4">Subject Details</th>
                                 <th>Attendance %</th>
-                                <th class="text-end">Actions</th>
+                                <th class="text-end pe-4">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for sub in subjects %}
                             <tr>
-                                <td>
+                                <td class="ps-4">
                                     <div class="d-flex flex-column">
                                         <span class="fw-bold text-dark">{{ sub.code }}</span>
                                         <span class="text-secondary small">{{ sub.name }}</span>
                                         <div class="mt-1">
                                             {% if sub.schedule %}
-                                                <span class="badge-schedule small"><i class="bi bi-clock me-1"></i>{{ sub.schedule }}</span>
+                                                <span class="badge-schedule"><i class="bi bi-clock me-1"></i>{{ sub.schedule }}</span>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -155,13 +82,10 @@
                                         </span>
                                         <small class="text-muted">{{ sub.attended }}/{{ sub.total_classes }}</small>
                                     </div>
-                                    
                                     <div class="progress mb-2">
                                         <div class="progress-bar {% if sub.attendance_percentage < 75 %}bg-danger{% else %}bg-success{% endif %}" 
-                                             role="progressbar" 
-                                             style="width: {{ sub.attendance_percentage }}%"></div>
+                                             role="progressbar" style="width: {{ sub.attendance_percentage }}%"></div>
                                     </div>
-
                                     <div class="d-flex align-items-center">
                                         {% if 'Attend' in sub.bunk_status %}
                                             <i class="bi bi-exclamation-circle-fill text-danger me-1"></i>
@@ -172,28 +96,16 @@
                                         {% endif %}
                                     </div>
                                 </td>
-                                <td class="text-end">
+                                <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end gap-2">
-                                        <a href="/update_attendance/{{ sub.id }}/present" class="btn btn-outline-success btn-sm btn-icon" title="Mark Present">
-                                            <i class="bi bi-check-lg"></i>
-                                        </a>
-                                        <a href="/update_attendance/{{ sub.id }}/absent" class="btn btn-outline-danger btn-sm btn-icon" title="Mark Absent">
-                                            <i class="bi bi-x-lg"></i>
-                                        </a>
-                                        <a href="/delete_subject/{{ sub.id }}" class="btn btn-light text-secondary btn-sm btn-icon" 
-                                           onclick="return confirm('Delete this subject permanently?')" title="Delete">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
+                                        <a href="/update_attendance/{{ sub.id }}/present" class="btn btn-outline-success btn-sm"><i class="bi bi-check-lg"></i></a>
+                                        <a href="/update_attendance/{{ sub.id }}/absent" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-lg"></i></a>
+                                        <a href="/delete_subject/{{ sub.id }}" class="btn btn-light text-secondary btn-sm" onclick="return confirm('Delete subject?')"><i class="bi bi-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>
                             {% else %}
-                            <tr>
-                                <td colspan="3" class="text-center py-5 text-muted">
-                                    <i class="bi bi-journals display-4 d-block mb-3 opacity-25"></i>
-                                    No subjects yet. Click "Add Subject" to start!
-                                </td>
-                            </tr>
+                            <tr><td colspan="3" class="text-center py-5 text-muted">No subjects yet. Click "Add Subject" to start!</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -229,7 +141,7 @@
                                     {% endif %}
                                 </div>
                             </div>
-                            <a href="/delete_assignment/{{ task.id }}" class="text-muted hover-danger ms-2"><i class="bi bi-check-circle fs-5"></i></a>
+                            <a href="/delete_assignment/{{ task.id }}" class="text-muted ms-2"><i class="bi bi-check-circle fs-5"></i></a>
                         </div>
                         {% endfor %}
                     {% else %}
@@ -247,31 +159,16 @@
 <div class="modal fade" id="subjectModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold">Add New Subject</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
+                <h5 class="fw-bold mb-3">Add New Subject</h5>
                 <form action="/add_subject" method="POST">
-                    <div class="mb-3">
-                        <label class="form-label small text-muted fw-bold">SUBJECT NAME</label>
-                        <input type="text" name="name" class="form-control form-control-lg bg-light border-0" placeholder="e.g. Engineering Mathematics" required>
+                    <input type="text" name="name" class="form-control mb-2" placeholder="Subject Name (e.g. Calculus)" required>
+                    <div class="row g-2 mb-2">
+                        <div class="col-6"><input type="text" name="code" class="form-control" placeholder="Code (MAT101)" required></div>
+                        <div class="col-6"><input type="text" name="prof" class="form-control" placeholder="Prof. Name"></div>
                     </div>
-                    <div class="row g-2 mb-3">
-                        <div class="col-6">
-                            <label class="form-label small text-muted fw-bold">CODE</label>
-                            <input type="text" name="code" class="form-control bg-light border-0" placeholder="MAT101" required>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label small text-muted fw-bold">PROFESSOR</label>
-                            <input type="text" name="prof" class="form-control bg-light border-0" placeholder="Dr. Smith">
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label small text-muted fw-bold">SCHEDULE</label>
-                        <input type="text" name="schedule" class="form-control bg-light border-0" placeholder="e.g. Mon 9AM, Wed 2PM">
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" style="background: var(--primary-gradient); border: none;">Save Subject</button>
+                    <input type="text" name="schedule" class="form-control mb-3" placeholder="Schedule (e.g. Mon 9AM, Wed 2PM)">
+                    <button type="submit" class="btn btn-primary w-100 btn-add">Save Subject</button>
                 </form>
             </div>
         </div>
@@ -281,29 +178,17 @@
 <div class="modal fade" id="taskModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold">New Assignment</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
+                <h5 class="fw-bold mb-3">New Assignment</h5>
                 <form action="/add_assignment" method="POST">
-                    <div class="mb-3">
-                        <label class="form-label small text-muted fw-bold">SELECT SUBJECT</label>
-                        <select name="subject_id" class="form-select bg-light border-0" required>
-                            {% for sub in subjects %}
-                            <option value="{{ sub.id }}">{{ sub.code }} - {{ sub.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small text-muted fw-bold">TITLE</label>
-                        <input type="text" name="title" class="form-control form-control-lg bg-light border-0" placeholder="e.g. Lab Report 3" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label small text-muted fw-bold">DUE DATE</label>
-                        <input type="date" name="due_date" class="form-control bg-light border-0" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" style="background: var(--primary-gradient); border: none;">Save Task</button>
+                    <select name="subject_id" class="form-select mb-2" required>
+                        {% for sub in subjects %}
+                        <option value="{{ sub.id }}">{{ sub.code }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="text" name="title" class="form-control mb-2" placeholder="Task Title" required>
+                    <input type="date" name="due_date" class="form-control mb-3" required>
+                    <button type="submit" class="btn btn-primary w-100 btn-add">Save Task</button>
                 </form>
             </div>
         </div>
