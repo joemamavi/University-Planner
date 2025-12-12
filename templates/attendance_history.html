@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>History: {{ subject.code }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+    <div class="container py-5" style="max-width: 600px;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0">Attendance Log</h4>
+            <a href="/" class="btn btn-outline-secondary btn-sm">Dashboard</a>
+        </div>
+        
+        <div class="card p-3 shadow-sm border-0">
+            <h5 class="text-primary fw-bold">{{ subject.name }} ({{ subject.code }})</h5>
+            <p class="text-muted">Total: {{ subject.attended }}/{{ subject.total_classes }} ({{ subject.attendance_percentage }}%)</p>
+            
+            <ul class="list-group list-group-flush mt-3">
+                {% for log in logs %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>{{ log.date.strftime('%b %d, %Y') }}</span>
+                        {% if log.status == 'Present' %}
+                            <span class="badge bg-success rounded-pill">Present</span>
+                        {% else %}
+                            <span class="badge bg-danger rounded-pill">Absent</span>
+                        {% endif %}
+                    </li>
+                {% else %}
+                    <li class="list-group-item text-muted">No attendance records yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

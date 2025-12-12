@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 import math
+from datetime import date
 
 db = SQLAlchemy()
 
@@ -17,26 +18,40 @@ class Subject(db.Model):
     zoom_link = db.Column(db.String(500))
     professor_email = db.Column(db.String(100))
     notes = db.Column(db.Text)
+
+    # Syllabus Tracking
+    total_modules = db.Column(db.Integer, default=5)
+    completed_student = db.Column(db.Float, default=0.0)
+    completed_teacher = db.Column(db.Float, default=0.0)
     
     assignments = db.relationship('Assignment', backref='subject', lazy=True, cascade="all, delete-orphan")
+    attendance_logs = db.relationship('AttendanceLog', backref='subject', lazy=True, cascade="all, delete-orphan")
+
+    @property
+    def student_progress_percent(self):
+        if self.total_modules == 0: return 0
+        pct = (self.completed_student / self.total_modules) * 100
+        return min(round(pct), 100)
+
+    @property
+    def teacher_progress_percent(self):
+        if self.total_modules == 0: return 0
+        pct = (self.completed_teacher / self.total_modules) * 100
+        return min(round(pct), 100)
 
     @property
     def attendance_percentage(self):
-        if self.total_classes == 0:
-            return 100.0
+        if self.total_classes == 0: return 100.0
         return round((self.attended / self.total_classes) * 100, 1)
 
     @property
     def bunk_status(self):
-        if self.total_classes == 0:
-            return "No classes yet."
+        if self.total_classes == 0: return "No classes yet."
         current_pct = self.attendance_percentage
         if current_pct >= 75:
             bunks_possible = math.floor((self.attended / 0.75) - self.total_classes)
-            if bunks_possible > 0:
-                return f"✅ Safe to bunk {bunks_possible}"
-            else:
-                return "⚠️ Don't miss next!"
+            if bunks_possible > 0: return f"✅ Safe to bunk {bunks_possible}"
+            else: return "⚠️ Don't miss next!"
         else:
             needed = (3 * self.total_classes) - (4 * self.attended)
             return f"🚨 Attend next {needed}!"
@@ -46,13 +61,27 @@ class Assignment(db.Model):
     title = db.Column(db.String(200), nullable=False)
     due_date = db.Column(db.Date, nullable=False)
     is_exam = db.Column(db.Boolean, default=False)
+    status = db.Column(db.String(20), default='Pending')
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=False)
 
-# --- NEW: Event Model for Calendar ---
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     date = db.Column(db.Date, nullable=False)
-    # Tag stores the color category: 'primary' (Blue), 'danger' (Red), 'success' (Green), etc.
     tag = db.Column(db.String(20), default='primary')
     description = db.Column(db.String(500))
+
+class Note(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+
+class AttendanceLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=False)
+    date = db.Column(db.Date, default=date.today)
+    status = db.Column(db.String(10), nullable=False)
+
+class Settings(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    student_name = db.Column(db.String(100), default="Student")
+    university = db.Column(db.String(100), default="My University")

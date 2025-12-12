@@ -8,13 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --bg-body: #f4f7f6; --primary-color: #2c3e50; --brand-color: #0d6efd;
-            --card-bg: #ffffff; --text-main: #212529; --border-color: #e9ecef;
-        }
+        :root { --bg-body: #f4f7f6; --primary-color: #2c3e50; --brand-color: #0d6efd; --card-bg: #ffffff; --text-main: #212529; --border-color: #e9ecef; }
         body { background-color: var(--bg-body); font-family: 'Inter', sans-serif; color: var(--text-main); }
         h3, h5, h6 { font-family: 'Manrope', sans-serif; }
-        .header-section { background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 1.5rem 0; margin-bottom: 2rem; }
+        .header-section { background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 1rem 0; margin-bottom: 2rem; }
         .pro-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03); overflow: hidden; height: 100%; }
         .card-header-custom { background: transparent; border-bottom: 1px solid var(--border-color); padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
         .btn-primary-custom { background-color: var(--brand-color); border-color: var(--brand-color); padding: 0.5rem 1.2rem; font-weight: 500; border-radius: 8px; color: white; }
@@ -24,28 +21,53 @@
         .progress { height: 6px; border-radius: 10px; background-color: #e9ecef; }
         .exam-alert-hero { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(44, 62, 80, 0.2); }
         a { text-decoration: none; }
+        .note-item { background: #fff9c4; border: 1px solid #f9e79f; padding: 10px; border-radius: 8px; margin-bottom: 10px; position: relative; font-size: 0.9em; color: #5d4037; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .note-delete { position: absolute; top: 5px; right: 5px; color: #bcaaa4; cursor: pointer; }
+        .nav-pills .nav-link { color: var(--text-main); font-size: 0.9em; padding: 0.4rem 1rem; border-radius: 6px; }
+        .nav-pills .nav-link.active { background-color: var(--brand-color); color: white; }
+        .syllabus-bar { height: 4px; border-radius: 2px; background: #e9ecef; width: 100%; display: block; margin-top: 4px; overflow: hidden; }
+        .syllabus-fill { height: 100%; display: block; }
     </style>
 </head>
 <body>
 
 <div class="header-section">
     <div class="container d-flex justify-content-between align-items-center">
-        <div>
-            <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-mortarboard-fill me-2 text-primary"></i>Academic Planner</h3>
-            <p class="text-muted mb-0 small">Dashboard & Tracker</p>
+        <div class="d-flex align-items-center">
+            <div class="me-4">
+                <h4 class="fw-bold mb-0 text-dark"><i class="bi bi-mortarboard-fill me-2 text-primary"></i>Planner</h4>
+            </div>
+            <form action="/search" method="GET" class="d-none d-md-block">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                    <input type="text" name="q" class="form-control bg-light border-start-0" placeholder="Search..." style="width: 250px;">
+                </div>
+            </form>
         </div>
-        <span class="text-muted small">{{ today.strftime('%A, %b %d') }}</span>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="text-end d-none d-sm-block">
+                <div class="fw-bold text-dark small">{{ settings.student_name }}</div>
+                <div class="text-muted" style="font-size: 0.75rem;">{{ settings.university }}</div>
+            </div>
+            <button class="btn btn-light rounded-circle border" data-bs-toggle="modal" data-bs-target="#profileModal">
+                <i class="bi bi-person-circle fs-5 text-secondary"></i>
+            </button>
+        </div>
     </div>
 </div>
 
 <div class="container pb-5">
+    
+    <div class="mb-4">
+        <h3 class="fw-bold mb-1">Hi, {{ settings.student_name.split(' ')[0] }}! 👋</h3>
+        <p class="text-muted fst-italic">"{{ quote }}"</p>
+    </div>
+
     {% if exams %}
     <div class="exam-alert-hero">
         <div class="me-3 fs-2"><i class="bi bi-exclamation-circle"></i></div>
-        <div>
-            <h5 class="mb-1 fw-bold">Upcoming Exam: {{ exams[0].title }}</h5>
-            <div class="opacity-75 small">{{ exams[0].subject.code }} • {% if (exams[0].due_date - today).days == 0 %} TODAY {% else %} in {{ (exams[0].due_date - today).days }} days {% endif %}</div>
-        </div>
+        <div><h5 class="mb-1 fw-bold">Upcoming Exam: {{ exams[0].title }}</h5><div class="opacity-75 small">{{ exams[0].subject.code }} • {% if (exams[0].due_date - today).days == 0 %} TODAY {% else %} in {{ (exams[0].due_date - today).days }} days {% endif %}</div></div>
     </div>
     {% endif %}
 
@@ -56,8 +78,8 @@
                     <h6 class="mb-0 fw-bold">My Courses</h6>
                     <div>
                         <div class="btn-group me-2">
-                            <a href="/timetable" class="btn btn-outline-custom btn-sm" title="Weekly Timetable"><i class="bi bi-table"></i> Weekly</a>
-                            <a href="/calendar" class="btn btn-outline-custom btn-sm" title="Monthly Calendar"><i class="bi bi-calendar-event"></i> Monthly</a>
+                            <a href="/timetable" class="btn btn-outline-custom btn-sm"><i class="bi bi-table"></i> Weekly</a>
+                            <a href="/calendar" class="btn btn-outline-custom btn-sm"><i class="bi bi-calendar-event"></i> Monthly</a>
                         </div>
                         <button class="btn btn-primary-custom btn-sm" data-bs-toggle="modal" data-bs-target="#subjectModal"><i class="bi bi-plus-lg"></i> Add</button>
                     </div>
@@ -66,7 +88,7 @@
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light text-muted small text-uppercase">
-                            <tr><th class="ps-4">Subject</th><th>Attendance</th><th class="text-end pe-4">Manage</th></tr>
+                            <tr><th class="ps-4">Subject</th><th>Status</th><th class="text-end pe-4">Manage</th></tr>
                         </thead>
                         <tbody>
                             {% for sub in subjects %}
@@ -74,9 +96,20 @@
                                 <td class="ps-4">
                                     <a href="/subject/{{ sub.id }}" class="fw-bold text-dark">{{ sub.code }}</a>
                                     <div class="text-muted small">{{ sub.name }}</div>
-                                    {% if sub.schedule %}<div class="mt-1"><span class="badge-schedule">{{ sub.schedule }}</span></div>{% endif %}
+                                    <div class="d-flex gap-2 mt-1">
+                                        {% if sub.schedule %}<span class="badge-schedule">{{ sub.schedule }}</span>{% endif %}
+                                        <a href="/history/{{ sub.id }}" class="text-muted small text-decoration-underline" style="font-size: 0.8em;">History</a>
+                                    </div>
+                                    <div class="mt-2" style="max-width: 150px;">
+                                        <div class="d-flex justify-content-between" style="font-size: 0.65em; color: #6c757d;">
+                                            <span>S: {{ sub.student_progress_percent }}%</span>
+                                            <span>T: {{ sub.teacher_progress_percent }}%</span>
+                                        </div>
+                                        <div class="syllabus-bar"><span class="syllabus-fill bg-primary" style="width: {{ sub.student_progress_percent }}%"></span></div>
+                                        <div class="syllabus-bar"><span class="syllabus-fill bg-warning" style="width: {{ sub.teacher_progress_percent }}%"></span></div>
+                                    </div>
                                 </td>
-                                <td style="width: 35%;">
+                                <td style="width: 30%;">
                                     <div class="d-flex justify-content-between mb-1">
                                         <span class="fw-bold small {% if sub.attendance_percentage < 75 %}text-danger{% else %}text-success{% endif %}">{{ sub.attendance_percentage }}%</span>
                                         <small class="text-muted">{{ sub.attended }}/{{ sub.total_classes }}</small>
@@ -102,69 +135,69 @@
         </div>
 
         <div class="col-lg-4">
+            <div class="pro-card mb-4 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0 fw-bold"><i class="bi bi-sticky me-2 text-warning"></i>Quick Notes</h6>
+                    <button class="btn btn-sm btn-light" onclick="document.getElementById('noteInput').focus()"><i class="bi bi-plus"></i></button>
+                </div>
+                {% for note in notes %}
+                <div class="note-item">{{ note.content }}<a href="/delete_note/{{ note.id }}" class="note-delete"><i class="bi bi-x"></i></a></div>
+                {% else %}<div class="text-center text-muted small py-2">No notes yet.</div>{% endfor %}
+                <form action="/add_note" method="POST" class="mt-2">
+                    <div class="input-group input-group-sm">
+                        <input type="text" name="content" id="noteInput" class="form-control" placeholder="Add a note..." required>
+                        <button class="btn btn-outline-secondary" type="submit">Add</button>
+                    </div>
+                </form>
+            </div>
+
             <div class="pro-card">
-                <div class="card-header-custom"><h6 class="mb-0 fw-bold">Tasks & Exams</h6><button class="btn btn-outline-custom btn-sm" data-bs-toggle="modal" data-bs-target="#taskModal"><i class="bi bi-plus-lg"></i></button></div>
-                <div>
-                    {% if assignments %}
-                        {% for task in assignments %}
-                        <div class="p-3 border-bottom d-flex align-items-center">
-                            <div class="me-3 text-secondary"><i class="bi {% if task.is_exam %}bi-lightning-charge-fill text-danger{% else %}bi-check2-square{% endif %} fs-4"></i></div>
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0 fw-bold fs-6">{{ task.title }}</h6>
-                                <div class="d-flex align-items-center gap-2 mt-1">
-                                    {% if task.is_exam %}<span class="badge-exam">EXAM</span>{% endif %}
-                                    <span class="badge border text-muted fw-normal bg-light">{{ task.subject.code }}</span>
-                                    <small class="text-muted">{% if task.due_date == today %}Today{% else %}{{ task.due_date.strftime('%b %d') }}{% endif %}</small>
+                <div class="card-header-custom">
+                    <ul class="nav nav-pills card-header-pills">
+                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-pending">Pending</button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-history">History</button></li>
+                    </ul>
+                    <button class="btn btn-outline-custom btn-sm" data-bs-toggle="modal" data-bs-target="#taskModal"><i class="bi bi-plus-lg"></i></button>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="tab-pending">
+                        {% if assignments %}
+                            {% for task in assignments %}
+                            <div class="p-3 border-bottom d-flex align-items-center">
+                                <div class="me-3 text-secondary"><i class="bi {% if task.is_exam %}bi-lightning-charge-fill text-danger{% else %}bi-check2-square{% endif %} fs-4"></i></div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0 fw-bold fs-6">{{ task.title }}</h6>
+                                    <div class="d-flex align-items-center gap-2 mt-1">
+                                        {% if task.is_exam %}<span class="badge-exam">EXAM</span>{% endif %}
+                                        <span class="badge border text-muted fw-normal bg-light">{{ task.subject.code }}</span>
+                                        <small class="text-muted">{% if task.due_date == today %}Today{% else %}{{ task.due_date.strftime('%b %d') }}{% endif %}</small>
+                                    </div>
                                 </div>
+                                <a href="/mark_done/{{ task.id }}" class="btn btn-sm btn-outline-success ms-2"><i class="bi bi-check-lg"></i></a>
                             </div>
-                            <a href="/delete_assignment/{{ task.id }}" class="text-muted ms-2"><i class="bi bi-check-circle fs-5"></i></a>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="text-center py-5 text-muted"><p class="small">No tasks pending.</p></div>
-                    {% endif %}
+                            {% endfor %}
+                        {% else %}<div class="text-center py-5 text-muted"><p class="small">No tasks pending.</p></div>{% endif %}
+                    </div>
+                    <div class="tab-pane fade" id="tab-history">
+                        {% if completed_assignments %}
+                            {% for task in completed_assignments %}
+                            <div class="p-3 border-bottom d-flex align-items-center bg-light opacity-75">
+                                <div class="me-3 text-success"><i class="bi bi-check-circle-fill fs-5"></i></div>
+                                <div class="flex-grow-1"><h6 class="mb-0 text-decoration-line-through text-muted">{{ task.title }}</h6><small class="text-muted">{{ task.subject.code }}</small></div>
+                                <a href="/delete_assignment/{{ task.id }}" class="text-muted small"><i class="bi bi-trash"></i></a>
+                            </div>
+                            {% endfor %}
+                        {% else %}<div class="text-center py-5 text-muted"><p class="small">No completed tasks yet.</p></div>{% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="subjectModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body p-4">
-                <h5 class="fw-bold mb-3">New Subject</h5>
-                <form action="/add_subject" method="POST">
-                    <input type="text" name="name" class="form-control mb-3" placeholder="Name" required>
-                    <div class="row g-2 mb-3"><div class="col-6"><input type="text" name="code" class="form-control" placeholder="Code" required></div><div class="col-6"><input type="text" name="prof" class="form-control" placeholder="Prof"></div></div>
-                    <input type="text" name="schedule" class="form-control mb-3" placeholder="Schedule (e.g. Mon 9AM)">
-                    <button type="submit" class="btn btn-primary-custom w-100">Save</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="taskModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body p-4">
-                {% if not subjects %}
-                    <div class="alert alert-warning text-center">Add a Subject first!</div>
-                {% else %}
-                    <h5 class="fw-bold mb-3">New Task</h5>
-                    <form action="/add_assignment" method="POST">
-                        <select name="subject_id" class="form-select mb-3" required>{% for sub in subjects %}<option value="{{ sub.id }}">{{ sub.code }}</option>{% endfor %}</select>
-                        <input type="text" name="title" class="form-control mb-3" placeholder="Title" required>
-                        <input type="date" name="due_date" class="form-control mb-3" required>
-                        <div class="form-check form-switch mb-4"><input class="form-check-input" type="checkbox" name="is_exam" id="isExam"><label class="form-check-label" for="isExam">Is Exam?</label></div>
-                        <button type="submit" class="btn btn-primary-custom w-100">Save</button>
-                    </form>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
+<div class="modal fade" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold">Profile</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-4"><form action="/update_profile" method="POST"><label class="form-label small fw-bold text-muted">YOUR NAME</label><input type="text" name="student_name" class="form-control mb-3" value="{{ settings.student_name }}"><label class="form-label small fw-bold text-muted">UNIVERSITY</label><input type="text" name="university" class="form-control mb-4" value="{{ settings.university }}"><div class="d-grid gap-2"><button type="submit" class="btn btn-primary-custom">Save</button><a href="/export_data" class="btn btn-outline-secondary">Export Data</a></div></form></div></div></div></div>
+<div class="modal fade" id="subjectModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-body p-4"><h5 class="fw-bold mb-3">New Subject</h5><form action="/add_subject" method="POST"><input type="text" name="name" class="form-control mb-3" placeholder="Name" required><div class="row g-2 mb-3"><div class="col-6"><input type="text" name="code" class="form-control" placeholder="Code" required></div><div class="col-6"><input type="text" name="prof" class="form-control" placeholder="Prof"></div></div><input type="text" name="schedule" class="form-control mb-3" placeholder="Schedule (e.g. Mon 9AM)"><button type="submit" class="btn btn-primary-custom w-100">Save</button></form></div></div></div></div>
+<div class="modal fade" id="taskModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-body p-4">{% if not subjects %}<div class="alert alert-warning text-center">Add a Subject first!</div>{% else %}<h5 class="fw-bold mb-3">New Task</h5><form action="/add_assignment" method="POST"><select name="subject_id" class="form-select mb-3" required>{% for sub in subjects %}<option value="{{ sub.id }}">{{ sub.code }}</option>{% endfor %}</select><input type="text" name="title" class="form-control mb-3" placeholder="Title" required><input type="date" name="due_date" class="form-control mb-3" required><div class="form-check form-switch mb-4"><input class="form-check-input" type="checkbox" name="is_exam" id="isExam"><label class="form-check-label" for="isExam">Is Exam?</label></div><button type="submit" class="btn btn-primary-custom w-100">Save</button></form>{% endif %}</div></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
