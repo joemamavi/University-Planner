@@ -9,132 +9,21 @@
 
     <style>
         :root {
-            /* PROFESSIONAL PALETTE */
-            --bg-body: #f4f7f6;           /* Very light gray/blue tint */
-            --primary-color: #2c3e50;     /* Dark Slate (Header) */
-            --accent-color: #34495e;      /* Secondary Slate */
-            --brand-color: #0d6efd;       /* Trustworthy Blue */
-            --card-bg: #ffffff;
-            --text-main: #212529;
-            --text-muted: #6c757d;
-            --border-color: #e9ecef;
+            --bg-body: #f4f7f6; --primary-color: #2c3e50; --brand-color: #0d6efd;
+            --card-bg: #ffffff; --text-main: #212529; --border-color: #e9ecef;
         }
-
-        body {
-            background-color: var(--bg-body);
-            font-family: 'Inter', sans-serif;
-            color: var(--text-main);
-        }
-
-        h1, h2, h3, h5 { font-family: 'Manrope', sans-serif; }
-
-        /* Minimal Header */
-        .header-section {
-            background-color: var(--card-bg);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem 0;
-            margin-bottom: 2rem;
-        }
-
-        /* Clean Professional Cards */
-        .pro-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
-            transition: all 0.2s ease;
-            height: 100%;
-            overflow: hidden;
-        }
-        
-        .card-header-custom {
-            background: transparent;
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.25rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Buttons */
-        .btn-primary-custom {
-            background-color: var(--brand-color);
-            border-color: var(--brand-color);
-            padding: 0.5rem 1.2rem;
-            font-weight: 500;
-            border-radius: 8px;
-        }
-        .btn-primary-custom:hover { background-color: #0b5ed7; }
-
-        .btn-outline-custom {
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            background: white;
-            border-radius: 8px;
-        }
-        .btn-outline-custom:hover { background: #f8f9fa; }
-
-        /* Status Badges */
-        .badge-schedule {
-            background-color: #eef2ff;
-            color: #4f46e5;
-            font-weight: 600;
-            padding: 0.35em 0.8em;
-            border-radius: 6px;
-            font-size: 0.8em;
-        }
-        
-        .badge-exam {
-            background-color: #fff0f0;
-            color: #dc3545;
-            border: 1px solid #ffcdd2;
-            font-weight: 700;
-            font-size: 0.7em;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        /* Progress Bars */
+        body { background-color: var(--bg-body); font-family: 'Inter', sans-serif; color: var(--text-main); }
+        h3, h5, h6 { font-family: 'Manrope', sans-serif; }
+        .header-section { background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 1.5rem 0; margin-bottom: 2rem; }
+        .pro-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03); overflow: hidden; height: 100%; }
+        .card-header-custom { background: transparent; border-bottom: 1px solid var(--border-color); padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .btn-primary-custom { background-color: var(--brand-color); border-color: var(--brand-color); padding: 0.5rem 1.2rem; font-weight: 500; border-radius: 8px; color: white; }
+        .btn-outline-custom { color: var(--text-main); border: 1px solid var(--border-color); background: white; border-radius: 8px; }
+        .badge-schedule { background-color: #eef2ff; color: #4f46e5; font-weight: 600; padding: 0.35em 0.8em; border-radius: 6px; font-size: 0.8em; }
+        .badge-exam { background-color: #fff0f0; color: #dc3545; border: 1px solid #ffcdd2; font-weight: 700; font-size: 0.7em; padding: 2px 6px; border-radius: 4px; }
         .progress { height: 6px; border-radius: 10px; background-color: #e9ecef; }
-        
-        /* Table Styling */
-        .table > :not(caption) > * > * { padding: 1rem 1.5rem; border-bottom-color: var(--border-color); }
-        .table-hover tbody tr:hover { background-color: #f8f9fa; }
-        
-        /* Links */
-        a.subject-link { color: var(--text-main); text-decoration: none; font-weight: 600; }
-        a.subject-link:hover { color: var(--brand-color); }
-
-        /* Task Items */
-        .task-item {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-        }
-        .task-item:last-child { border-bottom: none; }
-        
-        .icon-box {
-            width: 40px; height: 40px;
-            border-radius: 8px;
-            background-color: #f1f5f9;
-            color: #64748b;
-            display: flex; align-items: center; justify-content: center;
-            margin-right: 1rem;
-        }
-        .icon-box.exam { background-color: #fff0f0; color: #dc3545; }
-
-        /* Exam Alert Hero */
-        .exam-alert-hero {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(44, 62, 80, 0.2);
-        }
+        .exam-alert-hero { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(44, 62, 80, 0.2); }
+        a { text-decoration: none; }
     </style>
 </head>
 <body>
@@ -150,18 +39,12 @@
 </div>
 
 <div class="container pb-5">
-
     {% if exams %}
     <div class="exam-alert-hero">
         <div class="me-3 fs-2"><i class="bi bi-exclamation-circle"></i></div>
         <div>
             <h5 class="mb-1 fw-bold">Upcoming Exam: {{ exams[0].title }}</h5>
-            <div class="opacity-75 small">
-                {{ exams[0].subject.code }} • 
-                {% if (exams[0].due_date - today).days == 0 %} TODAY
-                {% else %} in {{ (exams[0].due_date - today).days }} days
-                {% endif %}
-            </div>
+            <div class="opacity-75 small">{{ exams[0].subject.code }} • {% if (exams[0].due_date - today).days == 0 %} TODAY {% else %} in {{ (exams[0].due_date - today).days }} days {% endif %}</div>
         </div>
     </div>
     {% endif %}
@@ -172,65 +55,45 @@
                 <div class="card-header-custom">
                     <h6 class="mb-0 fw-bold">My Courses</h6>
                     <div>
-                        <a href="/calendar" class="btn btn-outline-custom btn-sm me-2">
-                            <i class="bi bi-calendar3 me-1"></i> Timetable
-                        </a>
-                        <button class="btn btn-primary-custom btn-sm" data-bs-toggle="modal" data-bs-target="#subjectModal">
-                            <i class="bi bi-plus-lg"></i> Add
-                        </button>
+                        <div class="btn-group me-2">
+                            <a href="/timetable" class="btn btn-outline-custom btn-sm" title="Weekly Timetable"><i class="bi bi-table"></i> Weekly</a>
+                            <a href="/calendar" class="btn btn-outline-custom btn-sm" title="Monthly Calendar"><i class="bi bi-calendar-event"></i> Monthly</a>
+                        </div>
+                        <button class="btn btn-primary-custom btn-sm" data-bs-toggle="modal" data-bs-target="#subjectModal"><i class="bi bi-plus-lg"></i> Add</button>
                     </div>
                 </div>
                 
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light text-muted small text-uppercase">
-                            <tr>
-                                <th class="ps-4">Subject</th>
-                                <th>Attendance</th>
-                                <th class="text-end pe-4">Manage</th>
-                            </tr>
+                            <tr><th class="ps-4">Subject</th><th>Attendance</th><th class="text-end pe-4">Manage</th></tr>
                         </thead>
                         <tbody>
                             {% for sub in subjects %}
                             <tr>
                                 <td class="ps-4">
-                                    <a href="/subject/{{ sub.id }}" class="subject-link fs-6">{{ sub.code }}</a>
+                                    <a href="/subject/{{ sub.id }}" class="fw-bold text-dark">{{ sub.code }}</a>
                                     <div class="text-muted small">{{ sub.name }}</div>
-                                    {% if sub.schedule %}
-                                        <div class="mt-1"><span class="badge-schedule">{{ sub.schedule }}</span></div>
-                                    {% endif %}
+                                    {% if sub.schedule %}<div class="mt-1"><span class="badge-schedule">{{ sub.schedule }}</span></div>{% endif %}
                                 </td>
                                 <td style="width: 35%;">
                                     <div class="d-flex justify-content-between mb-1">
-                                        <span class="fw-bold small {% if sub.attendance_percentage < 75 %}text-danger{% else %}text-success{% endif %}">
-                                            {{ sub.attendance_percentage }}%
-                                        </span>
+                                        <span class="fw-bold small {% if sub.attendance_percentage < 75 %}text-danger{% else %}text-success{% endif %}">{{ sub.attendance_percentage }}%</span>
                                         <small class="text-muted">{{ sub.attended }}/{{ sub.total_classes }}</small>
                                     </div>
-                                    <div class="progress mb-2">
-                                        <div class="progress-bar {% if sub.attendance_percentage < 75 %}bg-danger{% else %}bg-success{% endif %}" 
-                                             style="width: {{ sub.attendance_percentage }}%"></div>
-                                    </div>
-                                    <div class="small fw-semibold" style="font-size: 0.8em; color: {% if 'Attend' in sub.bunk_status %}#dc3545{% else %}#198754{% endif %}">
-                                        {{ sub.bunk_status }}
-                                    </div>
+                                    <div class="progress mb-2"><div class="progress-bar {% if sub.attendance_percentage < 75 %}bg-danger{% else %}bg-success{% endif %}" style="width: {{ sub.attendance_percentage }}%"></div></div>
+                                    <div class="small fw-semibold" style="font-size: 0.8em; color: {% if 'Attend' in sub.bunk_status %}#dc3545{% else %}#198754{% endif %}">{{ sub.bunk_status }}</div>
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="btn-group">
                                         <a href="/update_attendance/{{ sub.id }}/present" class="btn btn-sm btn-outline-success"><i class="bi bi-check-lg"></i></a>
                                         <a href="/update_attendance/{{ sub.id }}/absent" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></a>
-                                        <a href="/delete_subject/{{ sub.id }}" class="btn btn-sm btn-outline-secondary" onclick="return confirm('Delete {{ sub.code }}?')"><i class="bi bi-trash"></i></a>
+                                        <a href="/delete_subject/{{ sub.id }}" class="btn btn-sm btn-outline-secondary" onclick="return confirm('Delete?')"><i class="bi bi-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>
                             {% else %}
-                            <tr>
-                                <td colspan="3" class="text-center py-5">
-                                    <div class="text-muted mb-2"><i class="bi bi-folder2-open display-6"></i></div>
-                                    <p class="text-muted small mb-0">No subjects found.</p>
-                                    <button class="btn btn-link btn-sm text-decoration-none" data-bs-toggle="modal" data-bs-target="#subjectModal">Add your first subject</button>
-                                </td>
-                            </tr>
+                            <tr><td colspan="3" class="text-center py-5 text-muted">No subjects found.</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -240,38 +103,25 @@
 
         <div class="col-lg-4">
             <div class="pro-card">
-                <div class="card-header-custom">
-                    <h6 class="mb-0 fw-bold">Tasks & Exams</h6>
-                    <button class="btn btn-outline-custom btn-sm" data-bs-toggle="modal" data-bs-target="#taskModal">
-                        <i class="bi bi-plus-lg"></i>
-                    </button>
-                </div>
+                <div class="card-header-custom"><h6 class="mb-0 fw-bold">Tasks & Exams</h6><button class="btn btn-outline-custom btn-sm" data-bs-toggle="modal" data-bs-target="#taskModal"><i class="bi bi-plus-lg"></i></button></div>
                 <div>
                     {% if assignments %}
                         {% for task in assignments %}
-                        <div class="task-item">
-                            <div class="icon-box {% if task.is_exam %}exam{% endif %}">
-                                {% if task.is_exam %}<i class="bi bi-lightning-charge-fill"></i>{% else %}<i class="bi bi-check2-square"></i>{% endif %}
-                            </div>
+                        <div class="p-3 border-bottom d-flex align-items-center">
+                            <div class="me-3 text-secondary"><i class="bi {% if task.is_exam %}bi-lightning-charge-fill text-danger{% else %}bi-check2-square{% endif %} fs-4"></i></div>
                             <div class="flex-grow-1">
                                 <h6 class="mb-0 fw-bold fs-6">{{ task.title }}</h6>
                                 <div class="d-flex align-items-center gap-2 mt-1">
                                     {% if task.is_exam %}<span class="badge-exam">EXAM</span>{% endif %}
                                     <span class="badge border text-muted fw-normal bg-light">{{ task.subject.code }}</span>
-                                    {% if task.due_date == today %}
-                                        <span class="badge bg-danger">Today</span>
-                                    {% else %}
-                                        <small class="text-muted">{{ task.due_date.strftime('%b %d') }}</small>
-                                    {% endif %}
+                                    <small class="text-muted">{% if task.due_date == today %}Today{% else %}{{ task.due_date.strftime('%b %d') }}{% endif %}</small>
                                 </div>
                             </div>
-                            <a href="/delete_assignment/{{ task.id }}" class="text-muted ms-2 hover-danger"><i class="bi bi-check-circle fs-5"></i></a>
+                            <a href="/delete_assignment/{{ task.id }}" class="text-muted ms-2"><i class="bi bi-check-circle fs-5"></i></a>
                         </div>
                         {% endfor %}
                     {% else %}
-                        <div class="text-center py-5">
-                            <p class="text-muted small">All caught up! No tasks pending.</p>
-                        </div>
+                        <div class="text-center py-5 text-muted"><p class="small">No tasks pending.</p></div>
                     {% endif %}
                 </div>
             </div>
@@ -282,31 +132,13 @@
 <div class="modal fade" id="subjectModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">New Subject</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
+                <h5 class="fw-bold mb-3">New Subject</h5>
                 <form action="/add_subject" method="POST">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold text-muted">NAME</label>
-                        <input type="text" name="name" class="form-control" placeholder="e.g. Data Structures" required>
-                    </div>
-                    <div class="row g-2 mb-3">
-                        <div class="col-6">
-                            <label class="form-label small fw-bold text-muted">CODE</label>
-                            <input type="text" name="code" class="form-control" placeholder="CSE101" required>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label small fw-bold text-muted">PROFESSOR</label>
-                            <input type="text" name="prof" class="form-control" placeholder="Dr. Smith">
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold text-muted">SCHEDULE</label>
-                        <input type="text" name="schedule" class="form-control" placeholder="Mon 9AM, Thu 2PM">
-                    </div>
-                    <button type="submit" class="btn btn-primary-custom w-100">Save Course</button>
+                    <input type="text" name="name" class="form-control mb-3" placeholder="Name" required>
+                    <div class="row g-2 mb-3"><div class="col-6"><input type="text" name="code" class="form-control" placeholder="Code" required></div><div class="col-6"><input type="text" name="prof" class="form-control" placeholder="Prof"></div></div>
+                    <input type="text" name="schedule" class="form-control mb-3" placeholder="Schedule (e.g. Mon 9AM)">
+                    <button type="submit" class="btn btn-primary-custom w-100">Save</button>
                 </form>
             </div>
         </div>
@@ -316,48 +148,17 @@
 <div class="modal fade" id="taskModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">New Task</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
                 {% if not subjects %}
-                    <div class="alert alert-warning text-center">
-                        <i class="bi bi-exclamation-triangle-fill mb-2 d-block fs-4"></i>
-                        <strong>No subjects found!</strong><br>
-                        You must add a subject before you can assign tasks to it.
-                    </div>
-                    <div class="d-grid">
-                        <button class="btn btn-outline-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#subjectModal">
-                            Add a Subject First
-                        </button>
-                    </div>
+                    <div class="alert alert-warning text-center">Add a Subject first!</div>
                 {% else %}
+                    <h5 class="fw-bold mb-3">New Task</h5>
                     <form action="/add_assignment" method="POST">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted">SUBJECT</label>
-                            <select name="subject_id" class="form-select" required>
-                                <option value="" selected disabled>Select a subject...</option>
-                                {% for sub in subjects %}
-                                <option value="{{ sub.id }}">{{ sub.code }} - {{ sub.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted">TITLE</label>
-                            <input type="text" name="title" class="form-control" placeholder="e.g. Lab Report / Midterm" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted">DUE DATE</label>
-                            <input type="date" name="due_date" class="form-control" required>
-                        </div>
-                        
-                        <div class="form-check form-switch mb-4 p-3 bg-light rounded border">
-                            <input class="form-check-input" type="checkbox" name="is_exam" id="isExamCheck">
-                            <label class="form-check-label fw-bold" for="isExamCheck">High Priority (Exam?)</label>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary-custom w-100">Save Task</button>
+                        <select name="subject_id" class="form-select mb-3" required>{% for sub in subjects %}<option value="{{ sub.id }}">{{ sub.code }}</option>{% endfor %}</select>
+                        <input type="text" name="title" class="form-control mb-3" placeholder="Title" required>
+                        <input type="date" name="due_date" class="form-control mb-3" required>
+                        <div class="form-check form-switch mb-4"><input class="form-check-input" type="checkbox" name="is_exam" id="isExam"><label class="form-check-label" for="isExam">Is Exam?</label></div>
+                        <button type="submit" class="btn btn-primary-custom w-100">Save</button>
                     </form>
                 {% endif %}
             </div>
