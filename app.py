@@ -80,7 +80,7 @@ def dashboard():
 
     return render_template('dashboard.html', subjects=subjects, assignments=pending, exams=[a for a in pending if a.is_exam], notes=Note.query.all(), today=date.today(), settings=Settings.query.first(), bottlenecks=bottlenecks, gaps=gaps, quote=random.choice(["Focus on progress.", "Code is poetry."]))
 
-# --- 3. TIMETABLE VIEW (UPDATED FOR INTERACTIVITY) ---
+# --- 3. TIMETABLE VIEW ---
 @app.route('/timetable')
 def timetable_view():
     s = Subject.query.all()
@@ -106,10 +106,9 @@ def timetable_view():
                             for hr in range(st, en):
                                 if hr in target_dict: target_dict[hr][day_key] = sub
 
-    # CHANGED: Added 'subjects=s' to allow picking a subject in the modal
     return render_template('timetable.html', timetable_theory=t_theory, timetable_lab=t_lab, days=['MON','TUE','WED','THU','FRI'], hours=h, subjects=s)
 
-# --- 4. NEW ROUTE: APPEND SCHEDULE ---
+# --- 4. APPEND SCHEDULE ---
 @app.route('/append_schedule', methods=['POST'])
 def append_schedule():
     subject_id = request.form.get('subject_id')
@@ -120,20 +119,15 @@ def append_schedule():
     
     sub = Subject.query.get(subject_id)
     if sub:
-        # Construct new slot string: e.g., "MON 10-11:T"
         new_slot = f"{day} {start}-{end}:{type_}"
-        
-        # Append to existing schedule
         if sub.schedule:
             sub.schedule += f", {new_slot}"
         else:
             sub.schedule = new_slot
-            
         db.session.commit()
-        
     return redirect(url_for('timetable_view'))
 
-# --- 5. ADD SUBJECT (KEEPING ORIGINAL LOGIC) ---
+# --- 5. ADD SUBJECT ---
 @app.route('/add_subject', methods=['POST'])
 def add_subject():
     days = request.form.getlist('days')
@@ -154,13 +148,14 @@ def add_subject():
     db.session.commit()
     return redirect(url_for('dashboard'))
 
-# ... [REST OF ROUTES] ...
+# --- REST OF ROUTES ---
 @app.route('/update_attendance/<int:subject_id>/<action>')
 def update_attendance(subject_id, action): 
     sub = Subject.query.get_or_404(subject_id)
     if action == 'present': sub.attended += 1; sub.total_classes += 1; db.session.add(AttendanceLog(subject_id=sub.id, status='Present', date=date.today()))
     elif action == 'absent': sub.total_classes += 1; db.session.add(AttendanceLog(subject_id=sub.id, status='Absent', date=date.today()))
     db.session.commit(); return redirect(url_for('dashboard'))
+
 @app.route('/undo_attendance/<int:subject_id>')
 def undo_attendance(subject_id):
     sub = Subject.query.get_or_404(subject_id)
@@ -170,97 +165,181 @@ def undo_attendance(subject_id):
         elif last_log.status == 'Absent': sub.total_classes = max(0, sub.total_classes - 1)
         db.session.delete(last_log); db.session.commit()
     return redirect(url_for('dashboard'))
+
 @app.route('/delete_subject/<int:id>')
 def delete_subject(id): db.session.delete(Subject.query.get_or_404(id)); db.session.commit(); return redirect(url_for('dashboard'))
+
 @app.route('/history/<int:subject_id>')
 def attendance_history(subject_id): return render_template('attendance_history.html', subject=Subject.query.get(subject_id), logs=AttendanceLog.query.filter_by(subject_id=subject_id).order_by(AttendanceLog.date.desc()).all())
+
 @app.route('/search')
 def search():
     q = request.args.get('q', '')
     if not q: return redirect(url_for('dashboard'))
     return render_template('search_results.html', query=q, subjects=Subject.query.filter(Subject.name.contains(q)|Subject.code.contains(q)).all(), tasks=Assignment.query.filter(Assignment.title.contains(q)).all(), notes=Note.query.filter(Note.content.contains(q)).all())
+
+# --- ROBUST FORECAST ROUTE ---
 @app.route('/forecast', methods=['POST'])
 def forecast_attendance():
-    # 1. Get dates from the form
-    start_str = request.form.get('start_date')
-    end_str = request.form.get('end_date')
-    
-    # 2. Convert to Python Date objects
-    start = datetime.strptime(start_str, '%Y-%m-%d').date()
-    end = datetime.strptime(end_str, '%Y-%m-%d').date()
-    
-    subjects = Subject.query.all()
-    alerts = []
-    
-    # 3. Generate list of all dates in the range (inclusive)
-    delta = (end - start).days
-    date_range = [start + timedelta(days=i) for i in range(delta + 1)]
-    
-    for sub in subjects:
-        if not sub.schedule:
-            continue
-            
-        # Count how many classes will be missed for this subject
-        missed_classes = 0
-        schedule_slots = [s.strip().upper() for s in sub.schedule.split(',')]
-        
-        for single_date in date_range:
-            day_name = single_date.strftime("%a").upper() # e.g., "MON", "TUE"
-            
-            # Check how many times this day appears in the subject's schedule
-            # checks if slot starts with "MON" (handles "MON 10-12:T")
-            classes_that_day = sum(1 for slot in schedule_slots if slot.startswith(day_name))
-            missed_classes += classes_that_day
-            
-        # 4. Calculate impact
-        if missed_classes > 0:
-            # Forecast: Attended stays same, Total increases by missed count
-            future_total = sub.total_classes + missed_classes
-            
-            # Avoid division by zero
-            if future_total > 0:
-                future_pct = (sub.attended / future_total) * 100
-                
-                # 5. Alert if it drops below 75%
-                if future_pct < 75.0:
-                    alerts.append({
-                        'code': sub.code,
-                        'name': sub.name,
-                        'new_percent': round(future_pct, 1)
-                    })
+    try:
+        start_str = request.form.get('start_date')
+        end_str = request.form.get('end_date')
 
-    return render_template('forecast_result.html', alerts=alerts, start=start, end=end)@app.route('/career')
+        if not start_str or not end_str:
+            return "Error: Please select both Start and End dates.", 400
+
+        start = datetime.strptime(start_str, '%Y-%m-%d').date()
+        end = datetime.strptime(end_str, '%Y-%m-%d').date()
+        
+        subjects = Subject.query.all()
+        alerts = []
+        
+        delta = (end - start).days
+        if delta < 0:
+            return "Error: End date cannot be before Start date.", 400
+            
+        date_range = [start + timedelta(days=i) for i in range(delta + 1)]
+        
+        for sub in subjects:
+            if not sub.schedule:
+                continue
+            
+            # Safe handling of None
+            current_attended = sub.attended or 0
+            current_total = sub.total_classes or 0
+            
+            missed_classes = 0
+            schedule_slots = [s.strip().upper() for s in sub.schedule.split(',')]
+            
+            for single_date in date_range:
+                day_name = single_date.strftime("%a").upper()
+                classes_that_day = sum(1 for slot in schedule_slots if slot.startswith(day_name))
+                missed_classes += classes_that_day
+            
+            if missed_classes > 0:
+                future_total = current_total + missed_classes
+                if future_total > 0:
+                    future_pct = (current_attended / future_total) * 100
+                    if future_pct < 75.0:
+                        alerts.append({
+                            'code': sub.code,
+                            'name': sub.name,
+                            'new_percent': round(future_pct, 1)
+                        })
+
+        return render_template('forecast_result.html', alerts=alerts, start=start, end=end)
+
+    except Exception as e:
+        print(f"FORECAST ERROR: {e}")
+        return f"An error occurred: {str(e)}", 500
+
+@app.route('/career')
 def career_view(): return render_template('career.html', items=CareerItem.query.order_by(CareerItem.date.desc()).all())
+
 @app.route('/add_career_item', methods=['POST'])
 def add_career_item(): db.session.add(CareerItem(title=request.form.get('title'), category=request.form.get('category'), tech_stack=request.form.get('tech_stack'), link=request.form.get('link'), date=datetime.strptime(request.form.get('date'), '%Y-%m-%d').date())); db.session.commit(); return redirect(url_for('career_view'))
+
 @app.route('/delete_career_item/<int:id>')
 def delete_career_item(id): db.session.delete(CareerItem.query.get(id)); db.session.commit(); return redirect(url_for('career_view'))
+
 @app.route('/add_assignment', methods=['POST'])
 def add_assignment(): db.session.add(Assignment(title=request.form.get('title'), due_date=datetime.strptime(request.form.get('due_date'), '%Y-%m-%d').date(), subject_id=request.form.get('subject_id'), is_exam=(True if request.form.get('is_exam') else False), status='Pending', color_tag=(request.form.get('color_tag') or 'emerald'), estimated_hours=(float(request.form.get('hours')) if request.form.get('hours') else 1.0))); db.session.commit(); return redirect(url_for('dashboard'))
+
 @app.route('/mark_done/<int:id>')
 def mark_done(id): t=Assignment.query.get(id); t.status='Done'; db.session.commit(); return redirect(url_for('dashboard'))
+
 @app.route('/delete_assignment/<int:id>')
 def delete_assignment(id): db.session.delete(Assignment.query.get(id)); db.session.commit(); return redirect(url_for('dashboard'))
+
 @app.route('/matrix')
 def matrix_view(): t = Assignment.query.filter_by(status='Pending').all(); return render_template('matrix.html', matrix={'q1':[x for x in t if x.matrix_quadrant=='q1'], 'q2':[x for x in t if x.matrix_quadrant=='q2'], 'q3':[x for x in t if x.matrix_quadrant=='q3'], 'q4':[x for x in t if x.matrix_quadrant=='q4']})
+
 @app.route('/update_quadrant/<int:id>/<string:quadrant>')
 def update_quadrant(id, quadrant): t=Assignment.query.get(id); t.matrix_quadrant=quadrant; db.session.commit(); return jsonify({'success': True})
+
+# --- FIXED CALENDAR VIEW ---
 @app.route('/calendar')
-def calendar_view(): return render_template('calendar.html', month_days=cal_module.Calendar(0).monthdatescalendar(datetime.now().year, datetime.now().month), events_by_date={}, current_year=datetime.now().year, current_month=datetime.now().month, month_name=cal_module.month_name[datetime.now().month], prev_year=2024, prev_month=1, next_year=2026, next_month=1)
+@app.route('/calendar/<int:year>/<int:month>')
+def calendar_view(year=None, month=None):
+    now = datetime.now()
+    if year is None: year = now.year
+    if month is None: month = now.month
+    
+    if month > 12:
+        month = 1
+        year += 1
+    elif month < 1:
+        month = 12
+        year -= 1
+        
+    events = Event.query.all()
+    assignments = Assignment.query.all()
+    
+    events_by_date = {}
+
+    def add_item(date_obj, title, tag, icon=""):
+        date_key = date_obj.strftime('%Y-%m-%d')
+        if date_key not in events_by_date:
+            events_by_date[date_key] = []
+        events_by_date[date_key].append({
+            'title': f"{icon} {title}",
+            'tag': tag
+        })
+
+    for e in events:
+        add_item(e.date, e.title, e.tag)
+        
+    for a in assignments:
+        tag = a.color_tag if a.color_tag else 'primary'
+        add_item(a.due_date, a.title, tag, "📝")
+
+    cal = cal_module.Calendar(0)
+    month_days = cal.monthdatescalendar(year, month)
+    
+    prev_m = month - 1
+    prev_y = year
+    if prev_m < 1: 
+        prev_m = 12
+        prev_y -= 1
+        
+    next_m = month + 1
+    next_y = year
+    if next_m > 12: 
+        next_m = 1
+        next_y += 1
+
+    return render_template('calendar.html', 
+                           month_days=month_days, 
+                           events_by_date=events_by_date, 
+                           current_year=year, 
+                           current_month=month, 
+                           month_name=cal_module.month_name[month], 
+                           prev_year=prev_y, 
+                           prev_month=prev_m, 
+                           next_year=next_y, 
+                           next_month=next_m)
+
 @app.route('/add_event', methods=['POST'])
 def add_event(): db.session.add(Event(title=request.form.get('title'), date=datetime.strptime(request.form.get('date'), '%Y-%m-%d').date(), tag=request.form.get('tag'))); db.session.commit(); return redirect(url_for('calendar_view'))
+
 @app.route('/delete_event/<int:id>')
 def delete_event(id): db.session.delete(Event.query.get(id)); db.session.commit(); return redirect(url_for('calendar_view'))
+
 @app.route('/add_note', methods=['POST'])
 def add_note(): db.session.add(Note(content=request.form.get('content'))); db.session.commit(); return redirect(url_for('dashboard'))
+
 @app.route('/delete_note/<int:id>')
 def delete_note(id): db.session.delete(Note.query.get(id)); db.session.commit(); return redirect(url_for('dashboard'))
+
 @app.route('/update_profile', methods=['POST'])
 def update_profile(): s=Settings.query.first(); s.student_name=request.form.get('student_name'); s.university=request.form.get('university'); db.session.commit(); return redirect(url_for('dashboard'))
+
 @app.route('/subject/<int:id>')
 def subject_details(id): return render_template('subject_details.html', subject=Subject.query.get(id))
+
 @app.route('/update_resources/<int:id>', methods=['POST'])
 def update_resources(id): s=Subject.query.get(id); s.syllabus_link=request.form.get('syllabus_link'); s.zoom_link=request.form.get('zoom_link'); s.notes=request.form.get('notes'); s.total_modules=int(request.form.get('total_modules') or 5); s.completed_student=float(request.form.get('completed_student') or 0); s.completed_teacher=float(request.form.get('completed_teacher') or 0); db.session.commit(); return redirect(url_for('subject_details', id=id))
+
 @app.route('/export_data')
 def export_data(): return redirect(url_for('dashboard'))
 
