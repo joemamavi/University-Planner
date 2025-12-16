@@ -35,7 +35,7 @@ def check_notifications():
             subjects = Subject.query.all()
             for sub in subjects:
                 if sub.schedule:
-                    # Simple check: assumes format "MON 14-16"
+                    # Simple check: assumes format "MON 14-16" or "MON 14-16:T"
                     slots = sub.schedule.split(',')
                     for slot in slots:
                         slot = slot.strip().upper()
@@ -65,7 +65,6 @@ def dashboard():
                 if today_name in slot.upper():
                     match = re.search(r'(\d+)-(\d+)', slot)
                     if match:
-                        # Trust the DB has correct 24h format (e.g., 14-16)
                         start, end = int(match.group(1)), int(match.group(2))
                         today_classes.append({'name': sub.code, 'start': start, 'end': end})
     
@@ -81,44 +80,72 @@ def dashboard():
 
     return render_template('dashboard.html', subjects=subjects, assignments=pending, exams=[a for a in pending if a.is_exam], notes=Note.query.all(), today=date.today(), settings=Settings.query.first(), bottlenecks=bottlenecks, gaps=gaps, quote=random.choice(["Focus on progress.", "Code is poetry."]))
 
-# --- 3. TIMETABLE VIEW (FIXED) ---
+# --- 3. TIMETABLE VIEW (UPDATED FOR INTERACTIVITY) ---
 @app.route('/timetable')
 def timetable_view():
     s = Subject.query.all()
-    h = [8,9,10,11,12,14,15,16,17,18,19] 
-    t = {x:{d:None for d in ['MON','TUE','WED','THU','FRI']} for x in h}
+    h = [8,9,10,11,14,15,16,17,18,19] 
+    
+    t_theory = {x:{d:None for d in ['MON','TUE','WED','THU','FRI']} for x in h}
+    t_lab = {x:{d:None for d in ['MON','TUE','WED','THU','FRI']} for x in h}
     
     for sub in s:
         if sub.schedule:
             slots = sub.schedule.split(',')
             for slot in slots:
                 slot = slot.strip().upper()
-                # Parse "MON 14-16"
-                match = re.search(r'([A-Z]+)\s+(\d+)-(\d+)', slot)
+                match = re.search(r'([A-Z]+)\s+(\d+)-(\d+)(?::([A-Z]+))?', slot)
                 if match:
-                    d, st, en = match.groups()
+                    d, st, en, type_suffix = match.groups()
                     st, en = int(st), int(en)
-                    
-                    # DIRECT MAPPING (No PM guessing)
+                    type_suffix = type_suffix or 'T' 
+                    target_dict = t_lab if type_suffix == 'L' else t_theory
+
                     for day_key in ['MON','TUE','WED','THU','FRI']:
                         if d in day_key:
                             for hr in range(st, en):
-                                if hr in t: t[hr][day_key] = sub
+                                if hr in target_dict: target_dict[hr][day_key] = sub
 
-    return render_template('timetable.html', timetable=t, days=['MON','TUE','WED','THU','FRI'], hours=h)
+    # CHANGED: Added 'subjects=s' to allow picking a subject in the modal
+    return render_template('timetable.html', timetable_theory=t_theory, timetable_lab=t_lab, days=['MON','TUE','WED','THU','FRI'], hours=h, subjects=s)
 
-# --- 4. ADD SUBJECT (STRICT FORMAT) ---
+# --- 4. NEW ROUTE: APPEND SCHEDULE ---
+@app.route('/append_schedule', methods=['POST'])
+def append_schedule():
+    subject_id = request.form.get('subject_id')
+    day = request.form.get('day')
+    start = request.form.get('start')
+    end = request.form.get('end')
+    type_ = request.form.get('type') # 'T' or 'L'
+    
+    sub = Subject.query.get(subject_id)
+    if sub:
+        # Construct new slot string: e.g., "MON 10-11:T"
+        new_slot = f"{day} {start}-{end}:{type_}"
+        
+        # Append to existing schedule
+        if sub.schedule:
+            sub.schedule += f", {new_slot}"
+        else:
+            sub.schedule = new_slot
+            
+        db.session.commit()
+        
+    return redirect(url_for('timetable_view'))
+
+# --- 5. ADD SUBJECT (KEEPING ORIGINAL LOGIC) ---
 @app.route('/add_subject', methods=['POST'])
 def add_subject():
     days = request.form.getlist('days')
     starts = request.form.getlist('start_times')
     ends = request.form.getlist('end_times')
+    types = request.form.getlist('types')
     
-    # Save as "MON 14-16"
     schedule_parts = []
     for i in range(len(days)):
         if days[i] and starts[i] and ends[i]:
-            part = f"{days[i]} {starts[i]}-{ends[i]}"
+            t_val = types[i] if i < len(types) else 'T'
+            part = f"{days[i]} {starts[i]}-{ends[i]}:{t_val}"
             schedule_parts.append(part)
     
     final_schedule = ", ".join(schedule_parts)
@@ -127,7 +154,7 @@ def add_subject():
     db.session.commit()
     return redirect(url_for('dashboard'))
 
-# ... [REST OF ROUTES: Keep your standard CRUD routes below] ...
+# ... [REST OF ROUTES] ...
 @app.route('/update_attendance/<int:subject_id>/<action>')
 def update_attendance(subject_id, action): 
     sub = Subject.query.get_or_404(subject_id)
@@ -153,8 +180,56 @@ def search():
     if not q: return redirect(url_for('dashboard'))
     return render_template('search_results.html', query=q, subjects=Subject.query.filter(Subject.name.contains(q)|Subject.code.contains(q)).all(), tasks=Assignment.query.filter(Assignment.title.contains(q)).all(), notes=Note.query.filter(Note.content.contains(q)).all())
 @app.route('/forecast', methods=['POST'])
-def forecast_attendance(): return render_template('forecast_result.html', alerts=[], start=date.today(), end=date.today())
-@app.route('/career')
+def forecast_attendance():
+    # 1. Get dates from the form
+    start_str = request.form.get('start_date')
+    end_str = request.form.get('end_date')
+    
+    # 2. Convert to Python Date objects
+    start = datetime.strptime(start_str, '%Y-%m-%d').date()
+    end = datetime.strptime(end_str, '%Y-%m-%d').date()
+    
+    subjects = Subject.query.all()
+    alerts = []
+    
+    # 3. Generate list of all dates in the range (inclusive)
+    delta = (end - start).days
+    date_range = [start + timedelta(days=i) for i in range(delta + 1)]
+    
+    for sub in subjects:
+        if not sub.schedule:
+            continue
+            
+        # Count how many classes will be missed for this subject
+        missed_classes = 0
+        schedule_slots = [s.strip().upper() for s in sub.schedule.split(',')]
+        
+        for single_date in date_range:
+            day_name = single_date.strftime("%a").upper() # e.g., "MON", "TUE"
+            
+            # Check how many times this day appears in the subject's schedule
+            # checks if slot starts with "MON" (handles "MON 10-12:T")
+            classes_that_day = sum(1 for slot in schedule_slots if slot.startswith(day_name))
+            missed_classes += classes_that_day
+            
+        # 4. Calculate impact
+        if missed_classes > 0:
+            # Forecast: Attended stays same, Total increases by missed count
+            future_total = sub.total_classes + missed_classes
+            
+            # Avoid division by zero
+            if future_total > 0:
+                future_pct = (sub.attended / future_total) * 100
+                
+                # 5. Alert if it drops below 75%
+                if future_pct < 75.0:
+                    alerts.append({
+                        'code': sub.code,
+                        'name': sub.name,
+                        'new_percent': round(future_pct, 1)
+                    })
+
+    return render_template('forecast_result.html', alerts=alerts, start=start, end=end)@app.route('/career')
 def career_view(): return render_template('career.html', items=CareerItem.query.order_by(CareerItem.date.desc()).all())
 @app.route('/add_career_item', methods=['POST'])
 def add_career_item(): db.session.add(CareerItem(title=request.form.get('title'), category=request.form.get('category'), tech_stack=request.form.get('tech_stack'), link=request.form.get('link'), date=datetime.strptime(request.form.get('date'), '%Y-%m-%d').date())); db.session.commit(); return redirect(url_for('career_view'))

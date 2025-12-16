@@ -17,7 +17,11 @@
         .type-col { background: #f9fafb; color: #6b7280; font-size: 0.7rem; font-weight: 600; width: 70px; }
         .lunch-col { background: #f3f4f6; color: #9ca3af; font-weight: 600; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); }
         .slot-cell { height: 50px; min-width: 80px; position: relative; transition: 0.2s; }
-        .slot-cell:hover { background-color: #f0fdf4; }
+        
+        /* HOVER EFFECT FOR EMPTY SLOTS */
+        .clickable-slot:hover { background-color: #dcfce7 !important; cursor: pointer; }
+        .clickable-slot:hover .add-icon { opacity: 1 !important; }
+        
         .class-badge { background: #d1fae5; color: #065f46; border: 1px solid #34d399; border-radius: 6px; padding: 4px; display: block; font-weight: 600; font-size: 0.75rem; text-decoration: none; }
         .class-badge:hover { background: #34d399; color: white; }
     </style>
@@ -38,8 +42,7 @@
                         <th>09:00<br><span class="fw-normal small">09:50</span></th>
                         <th>10:00<br><span class="fw-normal small">10:50</span></th>
                         <th>11:00<br><span class="fw-normal small">11:50</span></th>
-                        <th>12:00<br><span class="fw-normal small">12:50</span></th>
-                        <th rowspan="12" class="lunch-col">LUNCH BREAK</th>
+                        <th class="lunch-col">LUNCH<br>BREAK</th>
                         <th>14:00<br><span class="fw-normal small">14:50</span></th>
                         <th>15:00<br><span class="fw-normal small">15:50</span></th>
                         <th>16:00<br><span class="fw-normal small">16:50</span></th>
@@ -53,13 +56,36 @@
                     <tr>
                         <td rowspan="2" class="day-col">{{ day.upper() }}</td>
                         <td class="type-col">THEORY</td>
-                        {% for h in [8, 9, 10, 11, 12] %} <td class="slot-cell">{% if timetable[h][day] %}<a href="/subject/{{ timetable[h][day].id }}" class="class-badge">{{ timetable[h][day].code }}</a>{% endif %}</td> {% endfor %}
-                        {% for h in [14, 15, 16, 17, 18, 19] %} <td class="slot-cell">{% if timetable[h][day] %}<a href="/subject/{{ timetable[h][day].id }}" class="class-badge">{{ timetable[h][day].code }}</a>{% endif %}</td> {% endfor %}
+                        {% for h in [8, 9, 10, 11] %} 
+                            <td class="slot-cell {% if not timetable_theory[h][day] %}clickable-slot{% endif %}" {% if not timetable_theory[h][day] %}onclick="openSlotModal('{{ day }}', {{ h }}, 'T')"{% endif %}>
+                                {% if timetable_theory[h][day] %}<a href="/subject/{{ timetable_theory[h][day].id }}" class="class-badge">{{ timetable_theory[h][day].code }}</a>
+                                {% else %}<span class="add-icon text-success opacity-0 small fw-bold">+</span>{% endif %}
+                            </td> 
+                        {% endfor %}
+                        
+                        <td rowspan="2" class="lunch-col"></td>
+                        
+                        {% for h in [14, 15, 16, 17, 18, 19] %} 
+                            <td class="slot-cell {% if not timetable_theory[h][day] %}clickable-slot{% endif %}" {% if not timetable_theory[h][day] %}onclick="openSlotModal('{{ day }}', {{ h }}, 'T')"{% endif %}>
+                                {% if timetable_theory[h][day] %}<a href="/subject/{{ timetable_theory[h][day].id }}" class="class-badge">{{ timetable_theory[h][day].code }}</a>
+                                {% else %}<span class="add-icon text-success opacity-0 small fw-bold">+</span>{% endif %}
+                            </td> 
+                        {% endfor %}
                     </tr>
                     <tr>
                         <td class="type-col">LAB</td>
-                        {% for i in range(5) %} <td class="slot-cell bg-light"></td> {% endfor %}
-                        {% for i in range(6) %} <td class="slot-cell bg-light"></td> {% endfor %}
+                        {% for h in [8, 9, 10, 11] %} 
+                            <td class="slot-cell bg-light {% if not timetable_lab[h][day] %}clickable-slot{% endif %}" {% if not timetable_lab[h][day] %}onclick="openSlotModal('{{ day }}', {{ h }}, 'L')"{% endif %}>
+                                {% if timetable_lab[h][day] %}<a href="/subject/{{ timetable_lab[h][day].id }}" class="class-badge">{{ timetable_lab[h][day].code }}</a>
+                                {% else %}<span class="add-icon text-success opacity-0 small fw-bold">+</span>{% endif %}
+                            </td> 
+                        {% endfor %}
+                        {% for h in [14, 15, 16, 17, 18, 19] %} 
+                            <td class="slot-cell bg-light {% if not timetable_lab[h][day] %}clickable-slot{% endif %}" {% if not timetable_lab[h][day] %}onclick="openSlotModal('{{ day }}', {{ h }}, 'L')"{% endif %}>
+                                {% if timetable_lab[h][day] %}<a href="/subject/{{ timetable_lab[h][day].id }}" class="class-badge">{{ timetable_lab[h][day].code }}</a>
+                                {% else %}<span class="add-icon text-success opacity-0 small fw-bold">+</span>{% endif %}
+                            </td> 
+                        {% endfor %}
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -67,5 +93,62 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="addSlotModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h6 class="modal-title fw-bold">Add Class to Slot</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/append_schedule" method="POST">
+                    <input type="hidden" name="day" id="modalDay">
+                    <input type="hidden" name="start" id="modalStart">
+                    <input type="hidden" name="type" id="modalType">
+                    
+                    <div class="mb-3">
+                        <label class="small text-muted fw-bold mb-1">SUBJECT</label>
+                        <select name="subject_id" class="form-select form-select-sm" required>
+                            {% for sub in subjects %}
+                            <option value="{{ sub.id }}">{{ sub.code }} - {{ sub.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="small text-muted fw-bold mb-1">END TIME</label>
+                        <select name="end" id="modalEnd" class="form-select form-select-sm"></select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">Add to Schedule</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function openSlotModal(day, start, type) {
+        document.getElementById('modalDay').value = day;
+        document.getElementById('modalStart').value = start;
+        document.getElementById('modalType').value = type;
+        
+        // Populate End Time options (Start + 1, Start + 2, etc.)
+        const endSelect = document.getElementById('modalEnd');
+        endSelect.innerHTML = '';
+        for (let i = 1; i <= 3; i++) { 
+            let end = start + i;
+            // Simple visual check for formatting
+            let displayTime = (end > 12) ? (end - 12) + ' PM' : end + ' AM';
+            if(end === 12) displayTime = '12 PM';
+            
+            endSelect.add(new Option(`${end}:00 (${displayTime})`, end));
+        }
+        
+        new bootstrap.Modal(document.getElementById('addSlotModal')).show();
+    }
+</script>
 </body>
 </html>
