@@ -4,9 +4,6 @@
 
 CampusOS is a smart, Flask-based student productivity dashboard designed to go beyond simple to-do lists. It actively manages your attendance risk, optimizes your schedule, prioritizes tasks using the Eisenhower Matrix, and helps you track career achievements—all in one PWA-ready application.
 
-![CampusOS Dashboard](https://via.placeholder.com/1000x500?text=CampusOS+Dashboard)
-*(Replace this link with a screenshot of your actual dashboard)*
-
 ## 🚀 Key Features
 
 ### 🧠 Smart Attendance & Forecasting
