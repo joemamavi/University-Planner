@@ -8,8 +8,6 @@ from datetime import datetime, date, timedelta
 import calendar as cal_module
 import re
 import random
-import csv
-import io
 from collections import Counter
 from plyer import notification 
 
@@ -257,7 +255,7 @@ def matrix_view(): t = Assignment.query.filter_by(status='Pending').all(); retur
 @app.route('/update_quadrant/<int:id>/<string:quadrant>')
 def update_quadrant(id, quadrant): t=Assignment.query.get(id); t.matrix_quadrant=quadrant; db.session.commit(); return jsonify({'success': True})
 
-# --- FIXED CALENDAR VIEW ---
+# --- CALENDAR VIEW ---
 @app.route('/calendar')
 @app.route('/calendar/<int:year>/<int:month>')
 def calendar_view(year=None, month=None):
